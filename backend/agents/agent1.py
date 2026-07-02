@@ -2,7 +2,6 @@
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.tools import DuckDuckGoSearchResults
 from langchain_core.prompts import PromptTemplate
-from langchain_ollama import OllamaEmbeddings
 from langchain_core.output_parsers import StrOutputParser
 import re
 import bs4
@@ -11,12 +10,15 @@ from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from concurrent.futures import ThreadPoolExecutor, as_completed 
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_huggingface import HuggingFaceEmbeddings
 
 
 load_dotenv()
 
 #globally declare embedding 
-embeddings=OllamaEmbeddings(model='nomic-embed-text', num_ctx=8192)
+embeddings = HuggingFaceEmbeddings(
+    model_name="BAAI/bge-small-en-v1.5"
+)
 
 def run_agent1(claim):
     

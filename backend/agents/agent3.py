@@ -4,12 +4,11 @@ from agents.agent1 import run_agent1
 from agents.agent2 import run_agent2
 from langchain_groq import ChatGroq
 from dotenv import load_dotenv
-import time
 load_dotenv()
 
 
 def get_verdict(claim):
-    start = time.perf_counter()
+    
     agent1_output = run_agent1(claim)
     agent2_results = run_agent2(agent1_output)
     
@@ -29,7 +28,7 @@ def get_verdict(claim):
         for doc in agent2_results
     ))
     
-    print(sources)
+    # print(sources)
 
     
     model = ChatGroq(
@@ -97,7 +96,7 @@ def get_verdict(claim):
     )
 
     print("Prompt length:", len(prompt))
-    print(prompt[:1000])   # first 1000 characters
+    # print(prompt[:1000])   # first 1000 characters
     
     final_result = main_chain.invoke({
     "agent1_claim": agent1_output["claim"],
@@ -105,6 +104,6 @@ def get_verdict(claim):
     "sources": "\n".join(sources)
     })
 
-    print(f"LLM Verdict: {time.perf_counter()-start:.2f}s")
+    
     print(final_result)
     return final_result, contexts

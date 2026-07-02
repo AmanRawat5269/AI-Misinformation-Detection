@@ -1,11 +1,14 @@
-from langchain_ollama import ChatOllama, OllamaEmbeddings
+
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from sentence_transformers import CrossEncoder
 
 #Declare reranker and embedding globally
 reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
-embeddings=OllamaEmbeddings(model='nomic-embed-text', num_ctx=8192)
+embeddings = HuggingFaceEmbeddings(
+    model_name="BAAI/bge-small-en-v1.5"
+)
 
 #giving a little more edge to trusted chunks
 TRUSTED_DOMAINS = [

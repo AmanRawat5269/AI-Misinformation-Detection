@@ -26,3 +26,6 @@ sentence-transformers
 fastapi
 uvicorn
 pydantic
+
+langchain-huggingface
+sentence-transformers
