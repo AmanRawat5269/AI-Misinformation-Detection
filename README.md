@@ -89,27 +89,42 @@ Example 3
 
 5. The final fact-check result is displayed through the Streamlit frontend.
 
+---
+## 📋 Requirements
 
+- Docker Desktop
+- Google Gemini API Key
+- Groq API Key
+
+---
 ## 🚀 Installation
 
 ```bash
 git clone https://github.com/<username>/AI-Misinformation-Detection.git
 cd AI-Misinformation-Detection
-
-pip install -r requirements.txt
 ```
 
-### Start Backend
+### Create Environment File
+
+Create a `.env` file in the project root and add:
+
+```env
+GOOGLE_API_KEY=your_google_api_key
+GROQ_API_KEY=your_groq_api_key
+```
+
+### Run with Docker
+
+Make sure Docker Desktop is installed and running.
 
 ```bash
-uvicorn backend.api:app --reload
+docker compose up
 ```
 
-### Start Frontend
+### Access the Application
 
-```bash
-streamlit run frontend/app.py
-```
+- Frontend: http://localhost:8501
+- Backend API Docs: http://localhost:8000/docs
 
 ## 👨‍💻 Future Improvements
 - Better cache invalidation
