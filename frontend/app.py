@@ -2,6 +2,10 @@ import streamlit as st
 import requests
 import threading
 import time
+import os
+
+
+BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
 
 st.set_page_config(page_title="Misinformation Detector", page_icon="🔍", layout="centered")
 
@@ -48,7 +52,7 @@ if st.button("Check Claim", type="primary"):
 
         def call_api():
             result_holder["response"] = requests.post(
-                "http://127.0.0.1:8000/predict",
+                f"{BACKEND_URL}/predict",
                 json={"claim": claim}
             )
 
