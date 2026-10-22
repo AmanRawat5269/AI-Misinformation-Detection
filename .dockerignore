@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+.git
+.gitignore
+.env
+my_chroma_db/
+backend/my_chroma_db/
+backup/

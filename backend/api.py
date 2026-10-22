@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from typing import Annotated
+from fastapi.middleware.cors import CORSMiddleware #help nextjs and fastapi  tocommunicat even in diff host or http
 
 from agents.agent3 import get_verdict
 
@@ -11,6 +12,15 @@ app = FastAPI(
     description="API for fact-checking claims using a multi-agent RAG system",
     version="1.0.0"
     )
+
+#to connect the Nextjs which runs on port 3000
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 #for writing the claim and sending it 
 class ClaimRequest(BaseModel):

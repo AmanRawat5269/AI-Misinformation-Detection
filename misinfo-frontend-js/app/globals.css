@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { background: #E8ECF1; }
+body { @apply font-body text-ink antialiased; }
+
+:focus-visible { outline: 2px solid #14213D; outline-offset: 2px; }
+
+@keyframes fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.gauge-fill { transform-origin: left; animation: fill 900ms cubic-bezier(.2,.7,.2,1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gauge-fill { animation: none; }
+}

@@ -30,6 +30,7 @@ def run_agent2(agent1_output):
 
     if agent1_output["cached"]:
         print("Using cached chunks...")
+        #docs store the actual chuck and the score
         results = agent1_output["docs"]
 
     else:
@@ -39,7 +40,7 @@ def run_agent2(agent1_output):
             persist_directory='my_chroma_db',
             collection_name='query_informations'
         )
-        
+        #same here too like wehn we search for the similar embedding than in reuslt the chunk text + URL will be store
         results = vector_store.max_marginal_relevance_search(
             query=claim,
             k=8,

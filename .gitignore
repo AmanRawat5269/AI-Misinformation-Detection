@@ -1,0 +1,41 @@
+# Ignore everything by default
+*
+
+# Allow project folders
+!backend/
+!frontend/
+!misinfo-frontend-js/
+
+# Allow backend contents
+!backend/**
+backend/evaluate.py
+backend/my_chroma_db/
+
+# Allow existing frontend contents
+!frontend/**
+
+# Allow Next.js frontend contents
+!misinfo-frontend-js/**
+misinfo-frontend-js/node_modules/
+misinfo-frontend-js/.next/
+misinfo-frontend-js/.env*
+!misinfo-frontend-js/.env.local.example
+
+# Allow root project files
+!requirements.txt
+!.gitignore
+!.dockerignore
+!docker-compose.yml
+!Dockerfile
+
+# Ignore Python cache
+**/__pycache__/
+*.pyc
+
+# Ignore virtual environment and secrets
+venv/
+.env
+
+# Ignore backup and test files
+backup/
+test.py
