@@ -4,8 +4,8 @@ import { normalize } from "@/lib/normalize";
 // The RAG pipeline scrapes pages and calls LLMs, so it can be slow.
 export const maxDuration = 120;
 
-const BACKEND = process.env.BACKEND_URL ?? "http://localhost:8000";
-const CHECK_PATH = process.env.BACKEND_CHECK_PATH ?? "/check";
+const BACKEND = "http://backend:8000";
+const CHECK_PATH = process.env.BACKEND_CHECK_PATH ?? "/predict";
 
 export async function POST(req) {
   const body = await req.json().catch(() => null);

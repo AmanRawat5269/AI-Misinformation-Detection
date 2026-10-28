@@ -1,44 +1,43 @@
+
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
-from agents.agent1 import run_agent1  
+from agents.agent1 import run_agent1
 from agents.agent2 import run_agent2
 from langchain_groq import ChatGroq
+from langsmith import traceable
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
-def get_verdict(claim):
-    
-    agent1_output = run_agent1(claim)
-    agent2_results = run_agent2(agent1_output)
-    
-    
-    # extract contexts as plain text list for RAGAS
+@traceable(name="Agent 3 - Context Formatting")
+def prepare_contexts(agent2_results):
+    # Extract contexts as plain text list for RAGAS
     contexts = [doc.page_content for doc in agent2_results]
 
-    # formatted contexts for the LLM prompt
+    # Format contexts for the LLM prompt
     formatted_contexts = "\n\n".join(
-        doc.page_content
-        for doc in agent2_results
+        doc.page_content for doc in agent2_results
     )
-    
-    # extract source urls. 
+
+    return contexts, formatted_contexts
+
+
+@traceable(name="Agent 3 - Source Extraction")
+def extract_sources(agent2_results):
+    # Extract source URLs
     sources = list(set(
         doc.metadata.get("url", "Unknown")
         for doc in agent2_results
     ))
-    
-    # print(sources)
 
-    
-    model = ChatGroq(
-        model="openai/gpt-oss-120b",
-        temperature=0,
-        max_tokens=550
-        )
+    return sources
 
+
+@traceable(name="Agent 3 - Prompt Creation")
+def create_prompt(claim, formatted_contexts, sources):
     template = PromptTemplate(
-            template="""
+        template="""
         You are an expert fact-checking assistant.
 
         CLAIM:
@@ -82,28 +81,68 @@ def get_verdict(claim):
         SOURCES:
         <one URL per line copied exactly from the provided source list. If none are available, write "No sources available".>
         """,
-            input_variables=["agent1_claim", "contexts", "sources"]
-        )
-    
-    parser = StrOutputParser()
+        input_variables=["agent1_claim", "contexts", "sources"]
+    )
 
-    main_chain = template | model | parser
-    
     prompt = template.format(
-        agent1_claim=agent1_output["claim"],
+        agent1_claim=claim,
         contexts=formatted_contexts,
         sources="\n".join(sources)
     )
 
     print("Prompt length:", len(prompt))
-    # print(prompt[:1000])   # first 1000 characters
-    
+
+    return template, prompt
+
+
+@traceable(name="Agent 3 - Verdict Generation")
+def generate_verdict(template, claim, formatted_contexts, sources):
+    model = ChatGroq(
+        model="openai/gpt-oss-120b",
+        temperature=0,
+        max_tokens=550
+    )
+
+    parser = StrOutputParser()
+    main_chain = template | model | parser
+
     final_result = main_chain.invoke({
-    "agent1_claim": agent1_output["claim"],
-    "contexts": formatted_contexts,
-    "sources": "\n".join(sources)
+        "agent1_claim": claim,
+        "contexts": formatted_contexts,
+        "sources": "\n".join(sources)
     })
 
-    
     print(final_result)
+    return final_result
+
+
+@traceable(name="Agent 3 - Final Verdict")
+def get_verdict(claim):
+    # Step 1: Run Agent 1
+    agent1_output = run_agent1(claim)
+
+    # Step 2: Run Agent 2
+    agent2_results = run_agent2(agent1_output)
+
+    # Step 3: Prepare contexts
+    contexts, formatted_contexts = prepare_contexts(agent2_results)
+
+    # Step 4: Extract sources
+    sources = extract_sources(agent2_results)
+
+    # Step 5: Create prompt
+    template, prompt = create_prompt(
+        agent1_output["claim"],
+        formatted_contexts,
+        sources
+    )
+
+    # Step 6: Generate verdict
+    final_result = generate_verdict(
+        template,
+        agent1_output["claim"],
+        formatted_contexts,
+        sources
+    )
+
     return final_result, contexts

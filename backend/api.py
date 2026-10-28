@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware #help nextjs and fastapi  toc
 from agents.agent3 import get_verdict
 
 import traceback
+from langsmith import traceable # for langsmith
 
 app = FastAPI(
     title="Misinformation Detection API",
@@ -35,6 +36,7 @@ class ClaimResponse(BaseModel):
     
 
 @app.post('/predict', response_model=ClaimResponse) 
+@traceable(name="VeriFact Prediction")
 def predict(request : ClaimRequest):
     
     try :
